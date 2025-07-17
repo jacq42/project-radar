@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: project-radar
+
+  ai:
+    chat:
+      client:
+        enabled: false # disable auto configuration of chat client
+
+    openai:
+      base-url: http://localhost:1234 # local llm
+      api-key: ${OPENAI_API_KEY}
+      embedding:
+        model: text-embedding-3-small
+      http-client:
+        connect-timeout: 60s
+        read-timeout: 2m
