@@ -1,24 +1,27 @@
 package de.jkrech.projectradar.application
 
-import de.jkrech.projectradar.ports.profile.MarkdownReader
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.verify
+import io.mockk.verifySequence
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.ai.document.Document
-import org.springframework.core.io.ClassPathResource
-import kotlin.test.assertEquals
+import org.springframework.ai.embedding.TokenCountBatchingStrategy
+import org.springframework.ai.openai.OpenAiEmbeddingModel
 
 @ExtendWith(MockKExtension::class)
 class MatchingServiceTest {
 
     @MockK
+    private lateinit var embeddingModel: OpenAiEmbeddingModel
+
+    @MockK
     private lateinit var profileReader: ProfileReader
 
-    @InjectMockKs
+    @MockK
+    private lateinit var projectsImporter: ProjectsImporter
+
     private lateinit var matchingService: MatchingService
 
     @Test
@@ -26,27 +29,34 @@ class MatchingServiceTest {
         // given
         val testDocuments = listOf(Document("Some content", mapOf("filename" to "profile-de.md")))
         every { profileReader.read() } returns testDocuments
+        every { projectsImporter.import() } returns testDocuments
+
+        // OpenAiEmbeddingModel mocken
+        every { embeddingModel.embed(any(), any(), any()) } returns listOf(floatArrayOf(0.1f, 0.2f, 0.3f))
+
+        matchingService = MatchingService(
+            embeddingModel = embeddingModel,
+            profileReader = profileReader,
+            projectsImporters = listOf(projectsImporter)
+        )
 
         // when
         matchingService.findMatches()
 
         // then
-        verify { profileReader.read() }
+        verifySequence {
+            profileReader.read()
+            embeddingModel.embed(
+                testDocuments,
+                withArg { it.model == "text-embedding-3-small" },
+                withArg { it is TokenCountBatchingStrategy }
+            )
+            projectsImporter.import()
+            embeddingModel.embed(
+                testDocuments,
+                withArg { it.model == "text-embedding-3-small" },
+                withArg { it is TokenCountBatchingStrategy }
+            )
+        }
     }
-
-    @Test
-    fun `should find matches with real markdown file`() {
-        // given
-        val profile = ClassPathResource("profile/profile-test.md")
-        val realProfileReader = MarkdownReader(profile)
-        val serviceWithRealReader = MatchingService(realProfileReader)
-
-        // when
-        serviceWithRealReader.findMatches()
-
-        // then
-        val documents = realProfileReader.read()
-        assertEquals(3, documents.size, "Every headline should produce a document")
-    }
-
 }

@@ -7,8 +7,12 @@ spring:
       client:
         enabled: false # disable auto configuration of chat client
 
+    model:
+      embedding: openai # openai
+
     openai:
-      base-url: http://localhost:1234 # local llm
+      base-url: https://api.openai.com
+#      base-url: http://localhost:1234 # local llm
       api-key: ${OPENAI_API_KEY}
       embedding:
         model: text-embedding-3-small

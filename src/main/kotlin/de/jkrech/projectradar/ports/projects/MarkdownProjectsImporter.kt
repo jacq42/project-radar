@@ -1,19 +1,17 @@
-package de.jkrech.projectradar.ports.profile
+package de.jkrech.projectradar.ports.projects
 
-import de.jkrech.projectradar.application.ProfileReader
+import de.jkrech.projectradar.application.ProjectsImporter
 import org.springframework.ai.document.Document
 import org.springframework.ai.reader.markdown.MarkdownDocumentReader
 import org.springframework.ai.reader.markdown.config.MarkdownDocumentReaderConfig
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
 
-class MarkdownReader(
-    @Value("classpath:profile/profile-de.md") val profile: Resource?
-): ProfileReader {
+class MarkdownProjectsImporter(
+    @Value("classpath:projects/project.md") val project: Resource?
+): ProjectsImporter {
 
-    // TODO: configure profile resource in application.yml
-
-    override fun read(): List<Document> {
+    override fun import(): List<Document> {
         return loadMarkdown() ?: emptyList()
     }
 
@@ -25,7 +23,7 @@ class MarkdownReader(
             .withAdditionalMetadata("filename", "code.md")
             .build()
 
-        val reader = MarkdownDocumentReader(profile, config)
+        val reader = MarkdownDocumentReader(project, config)
         return reader.get()
     }
 }
