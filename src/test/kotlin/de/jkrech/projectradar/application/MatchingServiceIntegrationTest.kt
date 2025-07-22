@@ -2,6 +2,7 @@ package de.jkrech.projectradar.application
 
 import de.jkrech.projectradar.ports.profile.MarkdownReader
 import de.jkrech.projectradar.ports.projects.MarkdownProjectsImporter
+import de.jkrech.projectradar.ports.projects.PdfProjectsImporter
 import org.junit.jupiter.api.Test
 import org.springframework.ai.openai.OpenAiEmbeddingModel
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,13 +19,16 @@ class MatchingServiceIntegrationTest {
     @Test
     fun `should find matches with real markdown files`() {
         // given
-        val profile = ClassPathResource("profile/profile-test.md")
-        val realProfileReader = MarkdownReader(profile)
+        val profileMarkdown = ClassPathResource("profile/profile-test.md")
+        val markdownProfileReader = MarkdownReader(profileMarkdown)
 
-        val project = ClassPathResource("projects/project-test.md")
-        val realProjectsImporter = MarkdownProjectsImporter(project)
+        val projectMarkdown = ClassPathResource("projects/project-test.md")
+        val markdownProjectsImporter = MarkdownProjectsImporter(projectMarkdown)
 
-        val matchingService = MatchingService(openAiEmbeddingModel, realProfileReader, listOf(realProjectsImporter))
+        val projectPdf = ClassPathResource("projects/project-dummy.pdf")
+        val pdfProjectsImporter = PdfProjectsImporter(projectPdf)
+
+        val matchingService = MatchingService(openAiEmbeddingModel, markdownProfileReader, listOf(markdownProjectsImporter, pdfProjectsImporter))
 
         // when
         matchingService.findMatches()
