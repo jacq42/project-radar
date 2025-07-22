@@ -1,9 +1,10 @@
 plugins {
 	kotlin("jvm") version "1.9.25"
 	kotlin("plugin.spring") version "1.9.25"
+	kotlin("plugin.jpa") version "1.9.25"
 	id("org.springframework.boot") version "3.5.3"
 	id("io.spring.dependency-management") version "1.1.7"
-	kotlin("plugin.jpa") version "1.9.25"
+	id("info.solidsoft.pitest") version "1.15.0"
 }
 
 group = "de.jkrech.projectradar"
@@ -75,4 +76,32 @@ allOpen {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+// https://github.com/szpak/gradle-pitest-plugin
+pitest {
+	junit5PluginVersion.set("1.2.1")
+	targetClasses.set(setOf("de.jkrech.projectradar.*"))
+	//excludedClasses.set(setOf("de.jkrech.projectradar.config.*"))
+	//excludedTestClasses.set(setOf("de.jkrech.projectradar.**.*IntegrationTest*"))
+	//excludedMethods.set(setOf("equals", "hashCode", "toString"))
+	mutationThreshold.set(77)
+	threads.set(4)
+	outputFormats.set(setOf("HTML"))
+	timestampedReports.set(false)
+	failWhenNoMutations.set(false)
+	avoidCallsTo.set(
+		setOf(
+			"kotlin.jvm.internal"
+		)
+	)
+	mutators.set(setOf("DEFAULTS"))
+	//jvmArgs.set(
+	//    setOf(
+	//        "-Xms2048m",
+	//        "-Xmx2048m",
+	//        "-XX:+HeapDumpOnOutOfMemoryError",
+	//        "-Dfile.encoding=UTF-8"
+	//    )
+	//)
 }

@@ -3,6 +3,7 @@
 ## TODOs
 
 - [ ] Add profile as json or markdown file
+- [ ] Add project reader for markdowns
 - [ ] Add APIs/Scraper for platforms (freelance.de. freelancermap.de, etc.)
 - [ ] Add embedding and matching engine
 - [ ] List relevant projects
