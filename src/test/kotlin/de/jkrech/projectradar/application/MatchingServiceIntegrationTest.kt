@@ -1,7 +1,7 @@
 package de.jkrech.projectradar.application
 
 import de.jkrech.projectradar.ports.profile.MarkdownReader
-import de.jkrech.projectradar.ports.projects.FreelancerMapPlatformScraper
+import de.jkrech.projectradar.ports.projects.scraping.FreelancerMapPlatformScraper
 import de.jkrech.projectradar.ports.projects.MarkdownProjectsImporter
 import de.jkrech.projectradar.ports.projects.PdfProjectsImporter
 import org.junit.jupiter.api.Test

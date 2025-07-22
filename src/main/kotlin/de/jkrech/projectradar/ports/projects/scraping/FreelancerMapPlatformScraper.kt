@@ -1,4 +1,4 @@
-package de.jkrech.projectradar.ports.projects
+package de.jkrech.projectradar.ports.projects.scraping
 
 import com.microsoft.playwright.BrowserType
 import com.microsoft.playwright.Playwright
@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.ai.document.Document
 
 class FreelancerMapPlatformScraper: PlatformScraper(url()) {
+
+    // TODO: add tags from application.yml and use for query platform
 
     private val logger = LoggerFactory.getLogger(FreelancerMapPlatformScraper::class.java)
 
