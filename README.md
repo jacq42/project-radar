@@ -2,11 +2,12 @@
 
 ## TODOs
 
-- [ ] Add profile as json or markdown file
-- [ ] Add project reader for markdowns
+- [x] Add profile as json or markdown file
+- [x] Add project reader for markdown or pdf files
 - [ ] Add APIs/Scraper for platforms (freelance.de. freelancermap.de, etc.)
 - [ ] Add embedding and matching engine
 - [ ] List relevant projects
+- [ ] Add frontend to display projects
 
 ## Tech stack (WIP)
 
@@ -14,6 +15,8 @@
 - Frontend: [React](https://react.dev/)
 - AI: 
   - [LangChain4j](https://docs.langchain4j.dev/)
-  - Model: text-embedding-3-small
+  - Embedding Model: text-embedding-3-small
+- Scraping:
+  - [Playwright](https://playwright.dev/)
 
 
