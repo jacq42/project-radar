@@ -1,0 +1,38 @@
+name: Run tests
+
+on:
+  workflow_call:
+    inputs:
+      COMMIT_HASH:
+        description: 'The GitHub commit hash'
+        required: false
+        type: string
+
+permissions:
+  id-token: write
+  pull-requests: write
+  contents: write
+  issues: read
+  checks: write
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  COMMIT_HASH: ${{ inputs.COMMIT_HASH || github.sha }}
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout and configure
+        uses: ./actions/checkout-and-configure@main
+
+      - name: Run application tests
+        run: |
+          ./gradlew check
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test Report
+          path: build/reports/tests

@@ -1,0 +1,25 @@
+name: PITest
+
+on:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  run-pitest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout and configure
+        uses: ./actions/checkout-and-configure@main
+
+      - name: Run PITest
+        run: |
+          ./gradlew pitest
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PITest Mutation Test Report
+          path: build/reports/
