@@ -4,6 +4,9 @@ import de.jkrech.projectradar.ConfigurationHelper.Companion.configuredFreelancer
 import de.jkrech.projectradar.ConfigurationHelper.Companion.configuredMarkdownProfileReader
 import de.jkrech.projectradar.ConfigurationHelper.Companion.configuredMarkdownProjectsImporter
 import de.jkrech.projectradar.ConfigurationHelper.Companion.configuredPdfProjectsImporter
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.ai.openai.OpenAiEmbeddingModel
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,11 +16,17 @@ import org.springframework.core.io.ResourceLoader
 @SpringBootTest
 class MatchingServiceIntegrationTest {
 
-    @Autowired
-    lateinit var openAiEmbeddingModel: OpenAiEmbeddingModel
+    @MockK
+    private lateinit var mockedEmbeddingModel: OpenAiEmbeddingModel
 
     @Autowired
     lateinit var resourceLoader: ResourceLoader
+
+
+    @BeforeEach
+    fun setUp() {
+        every { mockedEmbeddingModel.embed(any(), any(), any()) } returns emptyList()
+    }
 
     @Test
     fun `should find matches with real markdown and pdf files`() {
@@ -27,7 +36,7 @@ class MatchingServiceIntegrationTest {
         val pdfProjectsImporter = configuredPdfProjectsImporter(resourceLoader)
 
         val matchingService = MatchingService(
-            embeddingModel = openAiEmbeddingModel,
+            embeddingModel = mockedEmbeddingModel,
             profileReader = markdownProfileReader,
             projectsImporters = listOf(markdownProjectsImporter, pdfProjectsImporter)
         )
@@ -43,7 +52,7 @@ class MatchingServiceIntegrationTest {
         val freelancerMapScraper = configuredFreelancermapPlatformScraper(listOf("kotlin", "devops", "cloud"))
 
         val matchingService = MatchingService(
-            embeddingModel = openAiEmbeddingModel,
+            embeddingModel = mockedEmbeddingModel,
             profileReader = markdownProfileReader,
             projectsImporters = listOf(freelancerMapScraper))
 
