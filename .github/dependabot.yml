@@ -5,6 +5,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      kotlin-plugins:
+        patterns:
+          - "org.jetbrains.kotlin*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
