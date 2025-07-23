@@ -1,7 +1,6 @@
 package de.jkrech.projectradar
 
 import de.jkrech.projectradar.ports.profile.markdown.MarkdownReader
-import de.jkrech.projectradar.ports.profile.markdown.MarkdownReaderProperties
 import de.jkrech.projectradar.ports.projects.markdown.MarkdownProjectsImporter
 import de.jkrech.projectradar.ports.projects.markdown.MarkdownProjectsImporterProperties
 import de.jkrech.projectradar.ports.projects.pdf.PdfProjectsImporter
@@ -14,12 +13,8 @@ class ConfigurationHelper {
 
     companion object {
 
-        fun configuredMarkdownProfileReader(resourceLoader: ResourceLoader): MarkdownReader {
-            val markdownProfileReaderProperties = MarkdownReaderProperties(
-                enabled = true,
-                file = "classpath:profile/profile-test.md"
-            )
-            return MarkdownReader(markdownProfileReaderProperties, resourceLoader)
+        fun configuredMarkdownProfileReader(): MarkdownReader {
+            return MarkdownReader()
         }
 
         fun configuredMarkdownProjectsImporter(resourceLoader: ResourceLoader): MarkdownProjectsImporter {

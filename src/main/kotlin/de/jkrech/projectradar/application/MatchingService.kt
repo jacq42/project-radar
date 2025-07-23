@@ -1,6 +1,7 @@
 package de.jkrech.projectradar.application
 
 import de.jkrech.projectradar.domain.ProfileResource
+import de.jkrech.projectradar.domain.ProjectMatch
 import de.jkrech.projectradar.ports.profile.ProfileReaderFactory
 import org.slf4j.LoggerFactory
 import org.springframework.ai.document.Document
@@ -20,7 +21,7 @@ class MatchingService(
     private val embeddingOptions = OpenAiEmbeddingOptions.builder().build()
     private val batchingStrategy= TokenCountBatchingStrategy()
 
-    fun findMatches(profileResource: ProfileResource) {
+    fun findMatches(profileResource: ProfileResource): List<ProjectMatch> {
         val profileReader = profileReaderFactory.findBy(profileResource)
         val profileData = profileReader.read(profileResource)
         logger.info("Found ${profileData.size} documents in profile")
@@ -37,6 +38,11 @@ class MatchingService(
             val embeddingProject = embedDocuments(projectData)
             logger.info("Embedding response: $embeddingProject")
         }
+
+        return listOf(ProjectMatch(
+            title ="dummy-project",
+            profileType = profileResource.type()
+        ))
     }
 
     private fun embedDocuments(documents: List<Document>): MutableList<FloatArray> {

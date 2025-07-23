@@ -2,6 +2,7 @@ package de.jkrech.projectradar.ports.rest
 
 import de.jkrech.projectradar.application.MatchingService
 import de.jkrech.projectradar.domain.ProfileResource
+import de.jkrech.projectradar.domain.ProjectMatch
 import org.springframework.http.ResponseEntity
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.web.bind.annotation.PostMapping
@@ -18,10 +19,10 @@ class MatchingController(
 ) {
 
     @PostMapping("/matches")
-    fun getMatches(@RequestPart("profile") profile: FilePart): Mono<ResponseEntity.BodyBuilder?> {
+    fun findProjectsFor(@RequestPart("profile") profile: FilePart): Mono<ResponseEntity<List<ProjectMatch>>> {
         return ProfileResource.from(profile)
             .subscribeOn(Schedulers.boundedElastic())
             .map { matchingService.findMatches(it) }
-            .map { ResponseEntity.ok() }
+            .map { ResponseEntity.ok(it) }
     }
 }
