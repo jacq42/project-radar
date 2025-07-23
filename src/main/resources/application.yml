@@ -20,6 +20,10 @@ spring:
         connect-timeout: 60s
         read-timeout: 2m
 
+service:
+  embedding:
+    type: fake # openai, fake
+
 profile:
   reader:
     markdown:

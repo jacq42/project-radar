@@ -4,16 +4,15 @@ import de.jkrech.projectradar.ConfigurationHelper.Companion.configuredFreelancer
 import de.jkrech.projectradar.ConfigurationHelper.Companion.configuredMarkdownProjectsImporter
 import de.jkrech.projectradar.ConfigurationHelper.Companion.configuredPdfProjectsImporter
 import de.jkrech.projectradar.domain.ProfileResource
-import de.jkrech.projectradar.ports.profile.ProfileReaderFactory
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.ai.openai.OpenAiEmbeddingModel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ClassPathResource
-import org.springframework.core.io.ResourceLoader
 
 @SpringBootTest
 class MatchingServiceIntegrationTest {
@@ -21,14 +20,15 @@ class MatchingServiceIntegrationTest {
     @MockK
     private lateinit var mockedEmbeddingModel: OpenAiEmbeddingModel
 
-    @Autowired
-    lateinit var resourceLoader: ResourceLoader
+    @MockK
+    private lateinit var embeddingService: EmbeddingService
 
     @Autowired
-    lateinit var profileReaderFactory: ProfileReaderFactory
+    private lateinit var profileReadingService: ProfileReadingService
 
     @BeforeEach
     fun setUp() {
+        every { embeddingService.embedDocuments(any()) } returns mutableListOf()
         every { mockedEmbeddingModel.embed(any(), any(), any()) } returns emptyList()
     }
 
@@ -37,12 +37,12 @@ class MatchingServiceIntegrationTest {
         // given
         val profileMarkdown = ProfileResource(ClassPathResource("profile/profile-test.md"))
 
-        val markdownProjectsImporter = configuredMarkdownProjectsImporter(resourceLoader)
-        val pdfProjectsImporter = configuredPdfProjectsImporter(resourceLoader)
+        val markdownProjectsImporter = configuredMarkdownProjectsImporter()
+        val pdfProjectsImporter = configuredPdfProjectsImporter()
 
         val matchingService = MatchingService(
-            embeddingModel = mockedEmbeddingModel,
-            profileReaderFactory = profileReaderFactory,
+            embeddingService = embeddingService,
+            profileReadingService = profileReadingService,
             projectsImporters = listOf(markdownProjectsImporter, pdfProjectsImporter)
         )
 
@@ -51,14 +51,15 @@ class MatchingServiceIntegrationTest {
     }
 
     @Test
+    @Disabled("Just for manual testing, not part of the CI pipeline")
     fun `should find matches with real markdown files and platform scrapes`() {
         // given
         val profileMarkdown = ProfileResource(ClassPathResource("profile/profile-test.md"))
         val freelancerMapScraper = configuredFreelancermapPlatformScraper(listOf("kotlin", "devops", "cloud"))
 
         val matchingService = MatchingService(
-            embeddingModel = mockedEmbeddingModel,
-            profileReaderFactory = profileReaderFactory,
+            embeddingService = embeddingService,
+            profileReadingService = profileReadingService,
             projectsImporters = listOf(freelancerMapScraper))
 
         // when

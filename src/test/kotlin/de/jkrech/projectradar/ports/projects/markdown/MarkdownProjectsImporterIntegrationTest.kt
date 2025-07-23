@@ -4,20 +4,13 @@ import de.jkrech.projectradar.ConfigurationHelper.Companion.configuredMarkdownPr
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.ai.document.Document
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.core.io.ResourceLoader
 
-@SpringBootTest
 class MarkdownProjectsImporterIntegrationTest {
-
-    @Autowired
-    lateinit var resourceLoader: ResourceLoader
 
     @Test
     fun `should find projects in markdown file`() {
         // given
-        val markdownProjectsImporter = configuredMarkdownProjectsImporter(resourceLoader)
+        val markdownProjectsImporter = configuredMarkdownProjectsImporter()
 
         // when
         val documents = markdownProjectsImporter.import()

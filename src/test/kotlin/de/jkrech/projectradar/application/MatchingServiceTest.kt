@@ -1,7 +1,6 @@
 package de.jkrech.projectradar.application
 
 import de.jkrech.projectradar.domain.ProfileResource
-import de.jkrech.projectradar.ports.profile.ProfileReaderFactory
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -9,21 +8,16 @@ import io.mockk.verifySequence
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.ai.document.Document
-import org.springframework.ai.embedding.TokenCountBatchingStrategy
-import org.springframework.ai.openai.OpenAiEmbeddingModel
 import org.springframework.core.io.ClassPathResource
 
 @ExtendWith(MockKExtension::class)
 class MatchingServiceTest {
 
     @MockK
-    private lateinit var embeddingModel: OpenAiEmbeddingModel
+    private lateinit var embeddingService: EmbeddingService
 
     @MockK
-    private lateinit var profileReader: ProfileReader
-
-    @MockK
-    private lateinit var profileReaderFactory: ProfileReaderFactory
+    private lateinit var profileReadingService: ProfileReadingService
 
     @MockK
     private lateinit var projectsImporter: ProjectsImporter
@@ -34,16 +28,15 @@ class MatchingServiceTest {
     fun `should find matches`() {
         // given
         val testDocuments = listOf(Document("Some content", mapOf("filename" to "profile-de.md")))
-        every { profileReader.read(any()) } returns testDocuments
-        every { profileReaderFactory.findBy(any()) } returns profileReader
+        every { profileReadingService.analyze(any()) } returns testDocuments
         every { projectsImporter.import() } returns testDocuments
-        every { embeddingModel.embed(any(), any(), any()) } returns listOf(floatArrayOf(0.1f, 0.2f, 0.3f))
+        every { embeddingService.embedDocuments(any()) } returns mutableListOf()
 
         val profileResource = ProfileResource(ClassPathResource("profile/profile-de.md"))
 
         matchingService = MatchingService(
-            embeddingModel = embeddingModel,
-            profileReaderFactory = profileReaderFactory,
+            embeddingService = embeddingService,
+            profileReadingService = profileReadingService,
             projectsImporters = listOf(projectsImporter)
         )
 
@@ -52,18 +45,10 @@ class MatchingServiceTest {
 
         // then
         verifySequence {
-            profileReader.read(profileResource)
-            embeddingModel.embed(
-                testDocuments,
-                withArg { it.model == "text-embedding-3-small" },
-                withArg { it is TokenCountBatchingStrategy }
-            )
+            profileReadingService.analyze(profileResource)
+            embeddingService.embedDocuments(testDocuments)
             projectsImporter.import()
-            embeddingModel.embed(
-                testDocuments,
-                withArg { it.model == "text-embedding-3-small" },
-                withArg { it is TokenCountBatchingStrategy }
-            )
+            embeddingService.embedDocuments(testDocuments)
         }
     }
 }
