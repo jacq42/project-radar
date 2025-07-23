@@ -44,7 +44,7 @@ dependencies {
 	implementation("org.springframework.ai:spring-ai-starter-model-openai")
 
 	// Scraping
-	implementation("com.microsoft.playwright:playwright:1.44.0")
+	implementation("com.microsoft.playwright:playwright:1.54.0")
 
 	// Testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
