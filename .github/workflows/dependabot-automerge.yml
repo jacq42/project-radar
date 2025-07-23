@@ -50,6 +50,10 @@ jobs:
       - name: Mark major update
         if: ${{ needs.fetch-metadata.outputs.update-type == 'version-update:semver-major' }}
         env:
+          REPO: ${{ github.repository }}
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr edit "$PR_URL" --add-label "major"
+        run: |
+          gh label create major --description "Major update for a dependency file" --color 006B75 --repo $REPO -f
+          gh pr edit "$PR_URL" --add-label "major"
+          echo "Marked PR with 'major' label"
