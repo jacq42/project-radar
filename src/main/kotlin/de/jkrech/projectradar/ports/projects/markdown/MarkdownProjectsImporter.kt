@@ -28,7 +28,7 @@ class MarkdownProjectsImporter(
             .withHorizontalRuleCreateDocument(true)
             .withIncludeCodeBlock(false)
             .withIncludeBlockquote(false)
-            .withAdditionalMetadata("filename", "code.md")
+            .withAdditionalMetadata("filename", "profile.md")
             .build()
 
         val projectResource = resourceLoader.getResource(properties.file)

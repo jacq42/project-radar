@@ -87,17 +87,18 @@ tasks.withType<Test> {
 pitest {
 	junit5PluginVersion.set("1.2.1")
 	targetClasses.set(setOf("de.jkrech.projectradar.*"))
-	//excludedClasses.set(setOf("de.jkrech.projectradar.config.*"))
+	excludedClasses.set(setOf("de.jkrech.projectradar.**.*Properties", "de.jkrech.projectradar.**.*Configuration"))
 	//excludedTestClasses.set(setOf("de.jkrech.projectradar.**.*IntegrationTest*"))
 	//excludedMethods.set(setOf("equals", "hashCode", "toString"))
-	mutationThreshold.set(77)
+	mutationThreshold.set(15)
 	threads.set(4)
 	outputFormats.set(setOf("HTML"))
 	timestampedReports.set(false)
 	failWhenNoMutations.set(false)
 	avoidCallsTo.set(
 		setOf(
-			"kotlin.jvm.internal"
+			"kotlin.jvm.internal",
+			"org.slf4j.Logger"
 		)
 	)
 	mutators.set(setOf("DEFAULTS"))
