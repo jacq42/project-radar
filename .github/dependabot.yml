@@ -12,6 +12,6 @@ updates:
       interval: "weekly"
 
   - package-ecosystem: "github-actions"
-    directory: "/actions/checkout-and-configure"
+    directory: ".github/actions/checkout-and-configure"
     schedule:
       interval: "weekly"

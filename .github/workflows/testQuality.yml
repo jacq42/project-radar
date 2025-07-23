@@ -11,7 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout and configure
-        uses: ./actions/checkout-and-configure@main
+        env:
+          COMMIT_HASH: ${{ env.COMMIT_HASH }}
+        uses: jacq42/project-radar/.github/actions/checkout-and-configure@main
 
       - name: Run PITest
         run: |
