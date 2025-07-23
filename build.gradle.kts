@@ -29,6 +29,7 @@ dependencies {
 	//implementation("org.springframework.boot:spring-boot-starter-data-rest")
 	//implementation("org.springframework.boot:spring-boot-starter-security")
 	//implementation("org.springframework.boot:spring-boot-starter-actuator")
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
 	// Kotlin
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
@@ -52,6 +53,7 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("com.ninja-squad:springmockk:4.0.2")
+	testImplementation("org.assertj:assertj-core:3.25.3")
 	testImplementation("io.mockk:mockk:1.14.5")
 	testImplementation("io.kotest:kotest-assertions-core-jvm:5.9.1")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

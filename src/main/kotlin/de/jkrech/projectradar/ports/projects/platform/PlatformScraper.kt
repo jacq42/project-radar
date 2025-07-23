@@ -1,4 +1,4 @@
-package de.jkrech.projectradar.ports.projects.scraping
+package de.jkrech.projectradar.ports.projects.platform
 
 import de.jkrech.projectradar.application.ProjectsImporter
 import org.springframework.ai.document.Document

@@ -19,3 +19,25 @@ spring:
       http-client:
         connect-timeout: 60s
         read-timeout: 2m
+
+profile:
+  reader:
+    markdown:
+      enabled: true
+      file: classpath:profile/profile-de.md
+
+projects:
+  importer:
+    markdown:
+      enabled: true
+      file: classpath:projects/project-test.md
+    pdf:
+      enabled: true
+      file: classpath:projects/project-dummy.pdf
+    platform:
+      freelancermap:
+        enabled: true
+        keywords:
+          - kotlin
+          - devops
+          - cloud

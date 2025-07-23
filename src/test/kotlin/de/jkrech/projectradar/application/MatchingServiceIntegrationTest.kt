@@ -1,9 +1,9 @@
 package de.jkrech.projectradar.application
 
 import de.jkrech.projectradar.ports.profile.MarkdownReader
-import de.jkrech.projectradar.ports.projects.scraping.FreelancerMapPlatformScraper
-import de.jkrech.projectradar.ports.projects.MarkdownProjectsImporter
-import de.jkrech.projectradar.ports.projects.PdfProjectsImporter
+import de.jkrech.projectradar.ports.projects.platform.FreelancerMapPlatformScraper
+import de.jkrech.projectradar.ports.projects.markdown.MarkdownProjectsImporter
+import de.jkrech.projectradar.ports.projects.pdf.PdfProjectsImporter
 import org.junit.jupiter.api.Test
 import org.springframework.ai.openai.OpenAiEmbeddingModel
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,7 +40,7 @@ class MatchingServiceIntegrationTest {
         val profileMarkdown = ClassPathResource("profile/profile-test.md")
         val markdownProfileReader = MarkdownReader(profileMarkdown)
 
-        val freelancerMapScraper = FreelancerMapPlatformScraper()
+        val freelancerMapScraper = FreelancerMapPlatformScraper(listOf("kotlin", "devops", "cloud"))
 
         val matchingService = MatchingService(openAiEmbeddingModel, markdownProfileReader, listOf(freelancerMapScraper))
 

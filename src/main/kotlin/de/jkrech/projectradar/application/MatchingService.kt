@@ -4,7 +4,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.ai.embedding.EmbeddingModel
 import org.springframework.ai.embedding.TokenCountBatchingStrategy
 import org.springframework.ai.openai.OpenAiEmbeddingOptions
+import org.springframework.stereotype.Service
 
+@Service
 class MatchingService(
     val embeddingModel: EmbeddingModel,
     val profileReader: ProfileReader,
