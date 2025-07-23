@@ -24,7 +24,8 @@ profile:
   reader:
     markdown:
       enabled: true
-      file: classpath:profile/profile-de.md
+    pdf:
+      enabled: true
 
 projects:
   importer:
@@ -36,7 +37,7 @@ projects:
       file: classpath:projects/project-dummy.pdf
     platform:
       freelancermap:
-        enabled: true
+        enabled: false
         keywords:
           - kotlin
           - devops

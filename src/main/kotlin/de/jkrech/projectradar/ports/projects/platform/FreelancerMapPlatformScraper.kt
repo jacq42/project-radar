@@ -4,9 +4,9 @@ import com.microsoft.playwright.BrowserContext
 import com.microsoft.playwright.BrowserType
 import com.microsoft.playwright.ElementHandle
 import com.microsoft.playwright.Playwright
-import de.jkrech.projectradar.domain.extractAndTrim
-import de.jkrech.projectradar.domain.selectAllAndJoin
-import de.jkrech.projectradar.domain.selectAndTrim
+import de.jkrech.projectradar.domain.extensions.extractAndTrim
+import de.jkrech.projectradar.domain.extensions.selectAllAndJoin
+import de.jkrech.projectradar.domain.extensions.selectAndTrim
 import org.slf4j.LoggerFactory
 import org.springframework.ai.document.Document
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty

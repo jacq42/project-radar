@@ -1,4 +1,4 @@
-package de.jkrech.projectradar.ports.profile
+package de.jkrech.projectradar.ports.profile.markdown
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties

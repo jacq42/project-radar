@@ -1,4 +1,4 @@
-package de.jkrech.projectradar.domain
+package de.jkrech.projectradar.domain.extensions
 
 import com.microsoft.playwright.Page
 
