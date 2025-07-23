@@ -1,5 +1,7 @@
 package de.jkrech.projectradar.application
 
+import de.jkrech.projectradar.domain.ProfileResource
+import de.jkrech.projectradar.ports.profile.ProfileReaderFactory
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.ai.document.Document
 import org.springframework.ai.embedding.TokenCountBatchingStrategy
 import org.springframework.ai.openai.OpenAiEmbeddingModel
+import org.springframework.core.io.ClassPathResource
 
 @ExtendWith(MockKExtension::class)
 class MatchingServiceTest {
@@ -20,6 +23,9 @@ class MatchingServiceTest {
     private lateinit var profileReader: ProfileReader
 
     @MockK
+    private lateinit var profileReaderFactory: ProfileReaderFactory
+
+    @MockK
     private lateinit var projectsImporter: ProjectsImporter
 
     private lateinit var matchingService: MatchingService
@@ -28,24 +34,25 @@ class MatchingServiceTest {
     fun `should find matches`() {
         // given
         val testDocuments = listOf(Document("Some content", mapOf("filename" to "profile-de.md")))
-        every { profileReader.read() } returns testDocuments
+        every { profileReader.read(any()) } returns testDocuments
+        every { profileReaderFactory.findBy(any()) } returns profileReader
         every { projectsImporter.import() } returns testDocuments
-
-        // OpenAiEmbeddingModel mocken
         every { embeddingModel.embed(any(), any(), any()) } returns listOf(floatArrayOf(0.1f, 0.2f, 0.3f))
+
+        val profileResource = ProfileResource(ClassPathResource("profile/profile-de.md"))
 
         matchingService = MatchingService(
             embeddingModel = embeddingModel,
-            profileReader = profileReader,
+            profileReaderFactory = profileReaderFactory,
             projectsImporters = listOf(projectsImporter)
         )
 
         // when
-        matchingService.findMatches()
+        matchingService.findMatches(profileResource)
 
         // then
         verifySequence {
-            profileReader.read()
+            profileReader.read(profileResource)
             embeddingModel.embed(
                 testDocuments,
                 withArg { it.model == "text-embedding-3-small" },

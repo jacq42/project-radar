@@ -46,11 +46,11 @@ class MatchingService(
     }
 
     private fun embedDocuments(documents: List<Document>): MutableList<FloatArray> {
-//        return embeddingModel.embed(
-//            documents,
-//            embeddingOptions,
-//            batchingStrategy
-//        )
-        return mutableListOf()
+        return embeddingModel.embed(
+            documents,
+            embeddingOptions,
+            batchingStrategy
+        )
+        //return mutableListOf()
     }
 }
