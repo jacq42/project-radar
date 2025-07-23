@@ -53,7 +53,7 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("com.ninja-squad:springmockk:4.0.2")
-	testImplementation("org.assertj:assertj-core:3.25.3")
+	testImplementation("org.assertj:assertj-core:3.27.3")
 	testImplementation("io.mockk:mockk:1.14.5")
 	testImplementation("io.kotest:kotest-assertions-core-jvm:5.9.1")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
