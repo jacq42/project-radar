@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service
 class MatchingService(
     private val embeddingService: EmbeddingService,
     private val profileReadingService: ProfileReadingService,
-    private val projectsImporters: List<ProjectsImporter>
+    private val projectsImporters: List<ProjectsImporter>,
+    private val similarityService: SimilarityService
 ) {
     private val logger = LoggerFactory.getLogger(MatchingService::class.java)
 
@@ -27,6 +28,8 @@ class MatchingService(
             logger.info("Found ${projectData.size} documents in project")
             val embeddingProject = embeddingService.embedDocuments(projectData)
             logger.info("Embedding response: $embeddingProject")
+            val similarity = similarityService.cosineSimilarity(embeddingProfile, embeddingProject)
+            logger.info("Cosine similarity: $similarity")
         }
 
         return listOf(ProjectMatch(

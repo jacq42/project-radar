@@ -26,10 +26,14 @@ class MatchingServiceIntegrationTest {
     @Autowired
     private lateinit var profileReadingService: ProfileReadingService
 
+    @MockK
+    private lateinit var similarityService: SimilarityService
+
     @BeforeEach
     fun setUp() {
         every { embeddingService.embedDocuments(any()) } returns mutableListOf()
         every { mockedEmbeddingModel.embed(any(), any(), any()) } returns emptyList()
+        every { similarityService.cosineSimilarity(any(), any()) } returns 1.0
     }
 
     @Test
@@ -43,7 +47,8 @@ class MatchingServiceIntegrationTest {
         val matchingService = MatchingService(
             embeddingService = embeddingService,
             profileReadingService = profileReadingService,
-            projectsImporters = listOf(markdownProjectsImporter, pdfProjectsImporter)
+            projectsImporters = listOf(markdownProjectsImporter, pdfProjectsImporter),
+            similarityService = similarityService
         )
 
         // when
@@ -60,7 +65,9 @@ class MatchingServiceIntegrationTest {
         val matchingService = MatchingService(
             embeddingService = embeddingService,
             profileReadingService = profileReadingService,
-            projectsImporters = listOf(freelancerMapScraper))
+            projectsImporters = listOf(freelancerMapScraper),
+            similarityService = similarityService
+        )
 
         // when
         matchingService.findMatches(profileMarkdown)
