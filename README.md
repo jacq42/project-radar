@@ -1,5 +1,8 @@
 # Project Radar
 
+[![CI](https://github.com/jacq42/project-radar/actions/workflows/main.yml/badge.svg)](https://github.com/jacq42/project-radar/actions/workflows/main.yml)
+[![PITest](https://github.com/jacq42/project-radar/actions/workflows/testQuality.yml/badge.svg)](https://github.com/jacq42/project-radar/actions/workflows/testQuality.yml)
+
 ## TODOs
 
 - [x] Add profile as json or markdown file
