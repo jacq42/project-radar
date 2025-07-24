@@ -30,7 +30,6 @@ class MatchingService(
             projects.forEach { project ->
                 val embeddingProject = embeddingService.embedDocuments(listOf(project))
                 val similarity = similarityService.cosineSimilarity(embeddingProfile, embeddingProject)
-                logger.info("Cosine similarity: $similarity")
                 val importedProject = ImportedProject(
                     importerSource = importer.source(),
                     documents = listOf(project),
@@ -54,7 +53,6 @@ class MatchingService(
         val profileData = profileReadingService.analyze(profileResource)
         logger.info("Found ${profileData.size} documents in profile")
         val embeddingProfile = embeddingService.embedDocuments(profileData)
-        logger.info("Embedding response: $embeddingProfile")
         return embeddingProfile
     }
 }
