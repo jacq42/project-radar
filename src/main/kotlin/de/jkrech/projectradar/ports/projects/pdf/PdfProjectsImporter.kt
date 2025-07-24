@@ -18,6 +18,10 @@ class PdfProjectsImporter(
 
     private val logger = LoggerFactory.getLogger(PdfProjectsImporter::class.java)
 
+    override fun source(): String {
+        return "PDF file: ${properties.file}"
+    }
+
     override fun import(): List<Document> {
         logger.info("Reading projects from {}", properties.file)
         return loadPdf() ?: emptyList()

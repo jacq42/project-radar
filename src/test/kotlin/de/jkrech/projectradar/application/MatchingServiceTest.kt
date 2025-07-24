@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verifySequence
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.ai.document.Document
@@ -37,6 +38,7 @@ class MatchingServiceTest {
         )
         every { profileReadingService.analyze(any()) } returns testDocuments
         every { projectsImporter.import() } returns testDocuments
+        every { projectsImporter.source() } returns "importer"
         every { embeddingService.embedDocuments(any()) } returns embedding
         every { similarityService.cosineSimilarity(any(), any()) } returns 0.0
 
@@ -50,15 +52,18 @@ class MatchingServiceTest {
         )
 
         // when
-        matchingService.findMatches(profileResource)
+        val result = matchingService.findMatches(profileResource)
 
         // then
+        assertThat(result).isNotEmpty()
+
         verifySequence {
             profileReadingService.analyze(profileResource)
             embeddingService.embedDocuments(testDocuments)
             projectsImporter.import()
             embeddingService.embedDocuments(testDocuments)
             similarityService.cosineSimilarity(embedding, embedding)
+            projectsImporter.source()
         }
     }
 }

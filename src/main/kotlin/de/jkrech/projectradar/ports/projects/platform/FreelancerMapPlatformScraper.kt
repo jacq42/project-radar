@@ -15,10 +15,14 @@ import org.springframework.stereotype.Component
 @Component
 @ConditionalOnProperty(name = ["projects.importer.platform.freelancermap.enabled"], havingValue = "true", matchIfMissing = false)
 class FreelancerMapPlatformScraper(
-    properties: FreelancerMapProperties
+    val properties: FreelancerMapProperties
 ): PlatformScraper(url(properties.keywords)) {
 
     private val logger = LoggerFactory.getLogger(FreelancerMapPlatformScraper::class.java)
+
+    override fun source(): String {
+        return "Freelancermap: ${BASE_URL}/${URI_PROJECTS}?$URI_QUERY_PARAMS&query=${properties.keywords.joinToString("+")}"
+    }
 
     override fun scrape(url: String): List<Document> {
         logger.info("Scraping projects from $url")
@@ -134,7 +138,11 @@ class FreelancerMapPlatformScraper(
     companion object {
         const val BASE_URL = "https://www.freelancermap.de"
         const val URI_PROJECTS = "projektboerse.html"
-        const val URI_QUERY_PARAMS = "projectContractTypes%5B0%5D=contracting&countries%5B0%5D=1&sort=2&pagenr=1"
+        const val URI_QUERY_PARAM_CONTRACTING = "projectContractTypes%5B0%5D=contracting"
+        const val URI_QUERY_PARAM_COUNTRY = "countries%5B0%5D=1"
+        const val URI_QUERY_PARAM_CREATED = "created=7" // last 7 days
+        const val URI_QUERY_PARAM_SORTING = "sort=2" // 1 - newest, 2 - relevance
+        const val URI_QUERY_PARAMS = "$URI_QUERY_PARAM_CONTRACTING&$URI_QUERY_PARAM_COUNTRY&$URI_QUERY_PARAM_CREATED&$URI_QUERY_PARAM_SORTING&pagenr=1"
 
         fun url(keywords: List<String>): String {
             val searchQueries = keywords.joinToString("+")

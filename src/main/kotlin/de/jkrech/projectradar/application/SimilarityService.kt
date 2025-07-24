@@ -14,7 +14,7 @@ class SimilarityService {
      * Ein Wert von 0 bedeutet keine Ähnlichkeit (orthogonale Vektoren)
      * Ein Wert von -1 bedeutet maximale Unähnlichkeit (entgegengesetzte Richtung)
      */
-    fun cosineSimilarity(embeddingProfile: MutableList<FloatArray>, embeddingProject: MutableList<FloatArray>): Double {
+    fun cosineSimilarity(embeddingProfile: List<FloatArray>, embeddingProject: List<FloatArray>): Double {
         if (embeddingProfile.isEmpty() && embeddingProject.isEmpty()) {
             return 1.0
         }
@@ -40,7 +40,7 @@ class SimilarityService {
         return dot / (sqrt(normA) * sqrt(normB))
     }
 
-    private fun convertToDouble(embeddings: MutableList<FloatArray>): MutableList<Double?> {
+    private fun convertToDouble(embeddings: List<FloatArray>): List<Double?> {
         return embeddings.flatMap { floatArray ->
             floatArray.map { it.toDouble() as Double? }.toMutableList()
         }.toMutableList()

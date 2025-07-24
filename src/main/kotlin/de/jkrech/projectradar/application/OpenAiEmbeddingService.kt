@@ -16,7 +16,7 @@ class OpenAiEmbeddingService(
     private val embeddingOptions = OpenAiEmbeddingOptions.builder().build()
     private val batchingStrategy= TokenCountBatchingStrategy()
 
-    override fun embedDocuments(documents: List<Document>): MutableList<FloatArray> {
+    override fun embedDocuments(documents: List<Document>): List<FloatArray> {
         return embeddingModel.embed(
             documents,
             embeddingOptions,

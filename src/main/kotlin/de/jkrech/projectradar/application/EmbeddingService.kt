@@ -4,5 +4,5 @@ import org.springframework.ai.document.Document
 
 interface EmbeddingService {
 
-    fun embedDocuments(documents: List<Document>): MutableList<FloatArray>
+    fun embedDocuments(documents: List<Document>): List<FloatArray>
 }

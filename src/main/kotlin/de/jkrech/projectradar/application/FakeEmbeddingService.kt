@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 @ConditionalOnProperty(name = ["service.embedding.type"], havingValue = "fake", matchIfMissing = false)
 class FakeEmbeddingService: EmbeddingService {
 
-    override fun embedDocuments(documents: List<Document>): MutableList<FloatArray> {
-        return mutableListOf()
+    override fun embedDocuments(documents: List<Document>): List<FloatArray> {
+        return listOf()
     }
 }

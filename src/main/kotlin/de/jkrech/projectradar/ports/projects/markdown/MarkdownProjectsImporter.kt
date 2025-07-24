@@ -18,6 +18,10 @@ class MarkdownProjectsImporter(
 
     private val logger = LoggerFactory.getLogger(MarkdownProjectsImporter::class.java)
 
+    override fun source(): String {
+        return "Markdown file: ${properties.file}"
+    }
+
     override fun import(): List<Document> {
         logger.info("Reading projects from {}", properties.file)
         return loadMarkdown() ?: emptyList()

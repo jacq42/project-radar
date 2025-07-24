@@ -2,6 +2,15 @@ spring:
   application:
     name: project-radar
 
+  webflux:
+    timeout: 120s
+
+  reactor:
+    netty:
+      http:
+        client:
+          connection-timeout: 120s
+
   ai:
     chat:
       client:
@@ -11,8 +20,8 @@ spring:
       embedding: openai # openai
 
     openai:
-      base-url: https://api.openai.com
-#      base-url: http://localhost:1234 # local llm
+#      base-url: https://api.openai.com
+      base-url: http://localhost:1234 # local llm
       api-key: ${OPENAI_API_KEY}
       embedding:
         model: text-embedding-3-small
@@ -22,7 +31,7 @@ spring:
 
 service:
   embedding:
-    type: fake # openai, fake
+    type: openai # openai, fake
 
 profile:
   reader:
@@ -34,15 +43,14 @@ profile:
 projects:
   importer:
     markdown:
-      enabled: true
+      enabled: false
       file: classpath:projects/project-test.md
     pdf:
-      enabled: true
+      enabled: false
       file: classpath:projects/project-dummy.pdf
     platform:
       freelancermap:
-        enabled: false
+        enabled: true
         keywords:
-          - kotlin
-          - devops
-          - cloud
+          - java
+          - backend
