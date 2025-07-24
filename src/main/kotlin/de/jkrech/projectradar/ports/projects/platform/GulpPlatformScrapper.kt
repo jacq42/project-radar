@@ -12,18 +12,19 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
 @Component
-@ConditionalOnProperty(name = ["projects.importer.platform.freelancermap.enabled"], havingValue = "true", matchIfMissing = false)
-class FreelancerMapPlatformScraper(
-    val properties: FreelancerMapProperties
+@ConditionalOnProperty(name = ["projects.importer.platform.gulp.enabled"], havingValue = "true", matchIfMissing = false)
+class GulpPlatformScrapper(
+    val properties: GulpProperties
 ): PlatformScraper(url(properties.keywords)) {
 
-    private val logger = LoggerFactory.getLogger(FreelancerMapPlatformScraper::class.java)
+    private val logger = LoggerFactory.getLogger(GulpPlatformScrapper::class.java)
 
     override fun source(): String {
-        return "Freelancermap: ${url(properties.keywords)}"
+        return "GULP: ${url(properties.keywords)}"
     }
 
     override fun createTeaserDocument(card: ElementHandle): Document {
+        throw PlatformScrapingException("Not yet implemented")
         val company = card.querySelector("a.company").extractAndTrim()
         val title = card.querySelector("a.project-title").extractAndTrim()
         val description = card.querySelector("div.description").extractAndTrim()
@@ -31,7 +32,7 @@ class FreelancerMapPlatformScraper(
         val location = card.querySelector("div.project-location").extractAndTrim()
         val detailUrlElement = card.querySelector("a.project-title")
         val detailUrl = detailUrlElement?.getAttribute("href") ?: ""
-        val fullUrl = if (detailUrl.startsWith("http")) detailUrl else "$BASE_URL$detailUrl"
+        val fullUrl = if (detailUrl.startsWith("http")) detailUrl else "${FreelancerMapPlatformScraper.Companion.BASE_URL}$detailUrl"
 
         val metadata = mapOf(
             "company" to company,
@@ -46,6 +47,7 @@ class FreelancerMapPlatformScraper(
     }
 
     override fun fetchProjectDetails(context: BrowserContext, url: String, teaserDocument: Document): Document {
+        throw PlatformScrapingException("Not yet implemented")
         val detailPage = context.newPage()
         try {
             detailPage.navigate(url)
@@ -76,11 +78,11 @@ class FreelancerMapPlatformScraper(
     }
 
     override fun selectorForSearchResults(): String {
-        return "#project-search-result"
+        return "#content"
     }
 
     override fun selectorForTeaserCards(): String {
-        return "div.project-container"
+        return "div.list-result-item"
     }
 
     override fun printLog(document: Document) {
@@ -100,16 +102,15 @@ class FreelancerMapPlatformScraper(
     }
 
     companion object {
-        const val BASE_URL = "https://www.freelancermap.de"
-        const val URI_PROJECTS = "projektboerse.html"
-        const val URI_QUERY_PARAM_CONTRACTING = "projectContractTypes%5B0%5D=contracting"
-        const val URI_QUERY_PARAM_COUNTRY = "countries%5B0%5D=1"
-        const val URI_QUERY_PARAM_CREATED = "created=7" // last 7 days
-        const val URI_QUERY_PARAM_SORTING = "sort=2" // 1 - newest, 2 - relevance
-        const val URI_QUERY_PARAMS = "$URI_QUERY_PARAM_CONTRACTING&$URI_QUERY_PARAM_COUNTRY&$URI_QUERY_PARAM_CREATED&$URI_QUERY_PARAM_SORTING&pagenr=1"
-
+        // https://www.gulp.de/gulp2/g/projekte?query=java%20backend&order=RELEVANCE_DESC&country=DE&remote=true&page=1
+        const val BASE_URL = "https://www.gulp.de/gulp2/g"
+        const val URI_PROJECTS = "projekte"
+        const val URI_QUERY_PARAM_CONTRACTING = "remote=true"
+        const val URI_QUERY_PARAM_COUNTRY = "country=DE"
+        const val URI_QUERY_PARAM_SORTING = "order=RELEVANCE_DESC"
+        const val URI_QUERY_PARAMS = "$URI_QUERY_PARAM_CONTRACTING&$URI_QUERY_PARAM_COUNTRY&$$URI_QUERY_PARAM_SORTING&page=1"
         fun url(keywords: List<String>): String {
-            val searchQueries = keywords.joinToString("+")
+            val searchQueries = keywords.joinToString("%20")
             return "$BASE_URL/$URI_PROJECTS?$URI_QUERY_PARAMS&query=$searchQueries"
         }
     }

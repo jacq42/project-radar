@@ -1,10 +1,12 @@
 package de.jkrech.projectradar.application
 
-import de.jkrech.projectradar.domain.ProfileResource
 import de.jkrech.projectradar.domain.ImportedProject
+import de.jkrech.projectradar.domain.ProfileResource
 import de.jkrech.projectradar.domain.ProjectMatch
+import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import kotlin.time.Duration.Companion.minutes
 
 @Service
 class MatchingService(
@@ -21,32 +23,99 @@ class MatchingService(
         }
         val embeddingProfile = embeddingsForProfile(profileResource)
 
-        val importedProjects = mutableListOf<ImportedProject>()
-        projectsImporters.forEach { importer ->
-            logger.info("Importing projects with ${importer::class.simpleName}")
-            val projects = importer.import()
-            logger.info("Found ${projects.size} projects")
+        return runBlocking {
+            try {
+                val importedProjects = withTimeout(1.minutes) { // 60 Sekunden Timeout für alle Imports
+                    projectsImporters
+                        .map { importer ->
+                            async(Dispatchers.IO) {
+                                try {
+                                    importer.import().map { project -> importer to project }
+                                } catch (e: Exception) {
+                                    logger.error("Import from ${importer.source()} failed: ${e.message}", e)
+                                    emptyList()
+                                }
+                            }
+                        }
+                        .awaitAll()
+                        .flatten()
+                }
 
-            projects.forEach { project ->
-                val embeddingProject = embeddingService.embedDocuments(listOf(project))
-                val similarity = similarityService.cosineSimilarity(embeddingProfile, embeddingProject)
-                val importedProject = ImportedProject(
-                    importerSource = importer.source(),
-                    documents = listOf(project),
-                    embeddings = embeddingProject,
-                    similarity = similarity
-                )
-                importedProjects.add(importedProject)
+                val projectsWithSimilarity = withTimeout(1.minutes) {
+                    importedProjects
+                        .map { (importer, project) ->
+                            async(Dispatchers.Default) { // Default for CPU intensive tasks
+                                try {
+                                    val embeddingProject = embeddingService.embedDocuments(listOf(project))
+                                    val similarity = similarityService.cosineSimilarity(embeddingProfile, embeddingProject)
+                                    ImportedProject(
+                                        importerSource = importer.source(),
+                                        documents = listOf(project),
+                                        embeddings = embeddingProject,
+                                        similarity = similarity
+                                    )
+                                } catch (e: Exception) {
+                                    logger.error("Could not calculate similarity for ${importer.source()}: ${e.message}", e)
+                                    null
+                                }
+                            }
+                        }
+                        .awaitAll()
+                        .filterNotNull()
+                }
+
+                projectsWithSimilarity
+                    .sortedByDescending { it.similarity }
+                    .map {
+                        ProjectMatch(
+                            title = it.title(),
+                            source = it.source(),
+                            similarity = it.similarity,
+                            profileType = profileResource.type()
+                        )
+                    }
+            } catch (e: Exception) {
+                logger.error("Failure while finding profile to project matches: ${e.message}", e)
+                emptyList()
             }
         }
-        importedProjects.sortByDescending(ImportedProject::similarity)
 
-        return importedProjects.map { ProjectMatch(
-            title = it.title(),
-            source = it.source(),
-            similarity = it.similarity,
-            profileType = profileResource.type()
-        ) }
+//        return runBlocking {
+//            projectsImporters
+//                .map { importer ->
+//                    async(Dispatchers.IO) {
+//                        try {
+//                            importer.import().map { project -> importer to project }
+//                        } catch (e: Exception) {
+//                            logger.error("Import von ${importer.source()} fehlgeschlagen: ${e.message}")
+//                            emptyList()
+//                        }
+//                    }
+//                }
+//                .awaitAll()
+//                .flatten()
+//                .asSequence()
+//                .map { (importer, project) ->
+//                    val embeddingProject = embeddingService.embedDocuments(listOf(project))
+//                    val similarity = similarityService.cosineSimilarity(embeddingProfile, embeddingProject)
+//                    ImportedProject(
+//                        importerSource = importer.source(),
+//                        documents = listOf(project),
+//                        embeddings = embeddingProject,
+//                        similarity = similarity
+//                    )
+//                }
+//                .sortedByDescending { it.similarity }
+//                .map {
+//                    ProjectMatch(
+//                        title = it.title(),
+//                        source = it.source(),
+//                        similarity = it.similarity,
+//                        profileType = profileResource.type()
+//                    )
+//                }
+//                .toList()
+//        }
     }
 
     private fun embeddingsForProfile(profileResource: ProfileResource): List<FloatArray> {

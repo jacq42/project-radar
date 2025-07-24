@@ -54,3 +54,8 @@ projects:
         keywords:
           - java
           - backend
+      gulp:
+        enabled: true
+        keywords:
+          - java
+          - backend
