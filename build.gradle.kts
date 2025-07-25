@@ -90,7 +90,7 @@ pitest {
 	excludedClasses.set(setOf("de.jkrech.projectradar.**.*Properties", "de.jkrech.projectradar.**.*Configuration"))
 	//excludedTestClasses.set(setOf("de.jkrech.projectradar.**.*IntegrationTest*"))
 	//excludedMethods.set(setOf("equals", "hashCode", "toString"))
-	mutationThreshold.set(15)
+	mutationThreshold.set(20)
 	threads.set(4)
 	outputFormats.set(setOf("HTML"))
 	timestampedReports.set(false)

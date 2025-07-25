@@ -11,6 +11,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.ai.document.Document
@@ -74,6 +75,21 @@ class MatchingServiceTest {
             similarityScoreEngine.findMostSimilarProjectsFor(profileData)
             relevanceScoreEngine.findMostRelevant(profileData, listOf(importedProject4, importedProject2, importedProject3))
         }
+    }
+
+    @Test
+    fun `should throw exception when no documents found in profile`() {
+        // given
+        val profileResource = ProfileResource(ClassPathResource("profile/empty-profile.md"))
+        every { profileReadingService.analyze(any()) } returns emptyList()
+
+        // when & then
+        val exception = assertThrows(MatchingServiceException::class.java) {
+            matchingService.findMatches(profileResource)
+        }
+        assertThat(exception.message).isEqualTo("No documents found in profile: empty-profile.md")
+
+        verify { profileReadingService.analyze(profileResource) }
     }
 
     private fun documentWithText(text: String): Document {
