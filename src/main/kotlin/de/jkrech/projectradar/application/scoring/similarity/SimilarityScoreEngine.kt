@@ -2,27 +2,24 @@ package de.jkrech.projectradar.application.scoring.similarity
 
 import de.jkrech.projectradar.application.MatchingServiceException
 import de.jkrech.projectradar.application.scoring.ProjectsImporter
-import de.jkrech.projectradar.application.scoring.ScoreEngine
 import de.jkrech.projectradar.application.scoring.similarity.embedding.EmbeddingService
 import de.jkrech.projectradar.domain.ImportedProject
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 import org.springframework.ai.document.Document
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.minutes
 
 @Component
-@ConditionalOnProperty(name = ["service.scoring.engine"], havingValue = "similarity", matchIfMissing = false)
 class SimilarityScoreEngine(
     private val embeddingService: EmbeddingService,
     private val projectsImporters: List<ProjectsImporter>,
     private val similarityService: SimilarityService
-): ScoreEngine {
+) {
 
     private val logger = LoggerFactory.getLogger(SimilarityScoreEngine::class.java)
 
-    override fun findScoresFor(profileData: List<Document>): List<ImportedProject> {
+    fun findMostSimilarProjectsFor(profileData: List<Document>): List<ImportedProject> {
         if (projectsImporters.isEmpty()) {
             throw MatchingServiceException("No projects importers configured")
         }

@@ -35,8 +35,6 @@ spring:
         read-timeout: 5m
 
 service:
-  scoring:
-    engine: relevance # similarity, relevance
   embedding:
     type: openai # openai, fake
 
@@ -53,11 +51,11 @@ projects:
       enabled: false
       file: classpath:projects/project-test.md
     pdf:
-      enabled: true
+      enabled: false
       file: classpath:projects/Test.pdf
     platform:
       freelancermap:
-        enabled: false
+        enabled: true
         keywords:
           - java
           - backend

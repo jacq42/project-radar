@@ -1,6 +1,7 @@
 package de.jkrech.projectradar.application
 
-import de.jkrech.projectradar.application.scoring.ScoreEngine
+import de.jkrech.projectradar.application.scoring.relevance.RelevanceScoreEngine
+import de.jkrech.projectradar.application.scoring.similarity.SimilarityScoreEngine
 import de.jkrech.projectradar.domain.ProfileResource
 import de.jkrech.projectradar.domain.ProjectMatch
 import org.slf4j.LoggerFactory
@@ -9,7 +10,8 @@ import org.springframework.stereotype.Service
 @Service
 class MatchingService(
     private val profileReadingService: ProfileReadingService,
-    private val scoreEngine: ScoreEngine
+    private val similarityScoreEngine: SimilarityScoreEngine,
+    private val relevanceScoreEngine: RelevanceScoreEngine
 ) {
     private val logger = LoggerFactory.getLogger(MatchingService::class.java)
 
@@ -21,9 +23,10 @@ class MatchingService(
             throw MatchingServiceException("No documents found in profile: ${profileResource.value.filename}")
         }
 
-        val sortedProjects = scoreEngine.findScoresFor(profileData)
-        logger.info("Found ${sortedProjects.size} projects for profile: ${profileResource.value.filename}")
-        return sortedProjects
+        val mostSimilarProjects = similarityScoreEngine.findMostSimilarProjectsFor(profileData).take(3)
+        val mostRelevantProjects = relevanceScoreEngine.findMostRelevant(profileData, mostSimilarProjects)
+        logger.info("Found ${mostRelevantProjects.size} projects for profile: ${profileResource.value.filename}")
+        return mostRelevantProjects
             .map {
                 ProjectMatch(
                     title = it.title(),

@@ -22,10 +22,10 @@ data class ImportedProject(
     }
 
     fun calculateScore(): Int {
-        if (this.similarity != null) {
-            return (this.similarity * 100.0).toInt()
-        } else if (this.relevance != null) {
+        if (this.relevance != null) {
             return this.relevance
+        } else if (this.similarity != null) {
+            return (this.similarity * 100.0).toInt()
         }
         return 0
     }

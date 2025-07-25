@@ -47,7 +47,7 @@ class SimilarityScoreEngineTest {
         )
 
         // when
-        val result = similarityScoreEngine.findScoresFor(testDocuments)
+        val result = similarityScoreEngine.findMostSimilarProjectsFor(testDocuments)
 
         // then
         assertThat(result).isNotEmpty()
