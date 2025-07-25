@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ClassPathResource
 
 @SpringBootTest
-class MatchingServiceIntegrationTest {
+class SimilarityScoreEngineIntegrationTest {
 
     @MockK
     private lateinit var mockedEmbeddingModel: OpenAiEmbeddingModel
@@ -37,6 +37,7 @@ class MatchingServiceIntegrationTest {
     }
 
     @Test
+    @Disabled("Just for manual testing, not part of the CI pipeline")
     fun `should find matches with real markdown and pdf files`() {
         // given
         val profileMarkdown = ProfileResource(ClassPathResource("profile/profile-test.md"))
@@ -44,7 +45,7 @@ class MatchingServiceIntegrationTest {
         val markdownProjectsImporter = configuredMarkdownProjectsImporter()
         val pdfProjectsImporter = configuredPdfProjectsImporter()
 
-        val matchingService = MatchingService(
+        val similarityScoreEngine = SimilarityScoreEngine(
             embeddingService = embeddingService,
             profileReadingService = profileReadingService,
             projectsImporters = listOf(markdownProjectsImporter, pdfProjectsImporter),
@@ -52,7 +53,7 @@ class MatchingServiceIntegrationTest {
         )
 
         // when
-        matchingService.findMatches(profileMarkdown)
+        similarityScoreEngine.findScores(profileMarkdown)
     }
 
     @Test
@@ -62,7 +63,7 @@ class MatchingServiceIntegrationTest {
         val profileMarkdown = ProfileResource(ClassPathResource("profile/profile-test.md"))
         val freelancerMapScraper = configuredFreelancermapPlatformScraper(listOf("kotlin", "devops", "cloud"))
 
-        val matchingService = MatchingService(
+        val similarityScoreEngine = SimilarityScoreEngine(
             embeddingService = embeddingService,
             profileReadingService = profileReadingService,
             projectsImporters = listOf(freelancerMapScraper),
@@ -70,6 +71,6 @@ class MatchingServiceIntegrationTest {
         )
 
         // when
-        matchingService.findMatches(profileMarkdown)
+        similarityScoreEngine.findScores(profileMarkdown)
     }
 }

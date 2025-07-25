@@ -12,7 +12,7 @@ import org.springframework.ai.document.Document
 import org.springframework.core.io.ClassPathResource
 
 @ExtendWith(MockKExtension::class)
-class MatchingServiceTest {
+class SimilarityScoreEngineTest {
 
     @MockK
     private lateinit var embeddingService: EmbeddingService
@@ -26,7 +26,7 @@ class MatchingServiceTest {
     @MockK
     private lateinit var similarityService: SimilarityService
 
-    private lateinit var matchingService: MatchingService
+    private lateinit var similarityScoreEngine: SimilarityScoreEngine
 
     @Test
     fun `should find matches`() {
@@ -44,7 +44,7 @@ class MatchingServiceTest {
 
         val profileResource = ProfileResource(ClassPathResource("profile/profile-de.md"))
 
-        matchingService = MatchingService(
+        similarityScoreEngine = SimilarityScoreEngine(
             embeddingService = embeddingService,
             profileReadingService = profileReadingService,
             projectsImporters = listOf(projectsImporter),
@@ -52,7 +52,7 @@ class MatchingServiceTest {
         )
 
         // when
-        val result = matchingService.findMatches(profileResource)
+        val result = similarityScoreEngine.findScores(profileResource)
 
         // then
         assertThat(result).isNotEmpty()

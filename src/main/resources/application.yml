@@ -30,6 +30,8 @@ spring:
         read-timeout: 2m
 
 service:
+  scoring:
+    engine: similarity # similarity, relevance
   embedding:
     type: openai # openai, fake
 
