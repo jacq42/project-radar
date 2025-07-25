@@ -3,6 +3,9 @@ package de.jkrech.projectradar.application
 import de.jkrech.projectradar.ConfigurationHelper.Companion.configuredFreelancermapPlatformScraper
 import de.jkrech.projectradar.ConfigurationHelper.Companion.configuredMarkdownProjectsImporter
 import de.jkrech.projectradar.ConfigurationHelper.Companion.configuredPdfProjectsImporter
+import de.jkrech.projectradar.application.scoring.similarity.embedding.EmbeddingService
+import de.jkrech.projectradar.application.scoring.similarity.SimilarityScoreEngine
+import de.jkrech.projectradar.application.scoring.similarity.SimilarityService
 import de.jkrech.projectradar.domain.ProfileResource
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -47,13 +50,12 @@ class SimilarityScoreEngineIntegrationTest {
 
         val similarityScoreEngine = SimilarityScoreEngine(
             embeddingService = embeddingService,
-            profileReadingService = profileReadingService,
             projectsImporters = listOf(markdownProjectsImporter, pdfProjectsImporter),
             similarityService = similarityService
         )
 
         // when
-        similarityScoreEngine.findScores(profileMarkdown)
+        //similarityScoreEngine.findScoresFor(profileMarkdown)
     }
 
     @Test
@@ -65,12 +67,11 @@ class SimilarityScoreEngineIntegrationTest {
 
         val similarityScoreEngine = SimilarityScoreEngine(
             embeddingService = embeddingService,
-            profileReadingService = profileReadingService,
             projectsImporters = listOf(freelancerMapScraper),
             similarityService = similarityService
         )
 
         // when
-        similarityScoreEngine.findScores(profileMarkdown)
+        //similarityScoreEngine.findScoresFor(profileMarkdown)
     }
 }

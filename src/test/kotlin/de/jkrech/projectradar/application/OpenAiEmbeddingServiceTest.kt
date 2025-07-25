@@ -1,5 +1,6 @@
 package de.jkrech.projectradar.application
 
+import de.jkrech.projectradar.application.scoring.similarity.embedding.OpenAiEmbeddingService
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK

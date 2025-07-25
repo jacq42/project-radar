@@ -1,6 +1,6 @@
 package de.jkrech.projectradar.ports.projects.markdown
 
-import de.jkrech.projectradar.application.ProjectsImporter
+import de.jkrech.projectradar.application.scoring.ProjectsImporter
 import org.slf4j.LoggerFactory
 import org.springframework.ai.document.Document
 import org.springframework.ai.reader.markdown.MarkdownDocumentReader

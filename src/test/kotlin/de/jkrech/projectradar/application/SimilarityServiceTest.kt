@@ -1,5 +1,6 @@
 package de.jkrech.projectradar.application
 
+import de.jkrech.projectradar.application.scoring.similarity.SimilarityService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.within
 import org.junit.jupiter.api.Test

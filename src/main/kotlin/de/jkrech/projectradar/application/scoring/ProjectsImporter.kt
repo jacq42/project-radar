@@ -1,4 +1,4 @@
-package de.jkrech.projectradar.application
+package de.jkrech.projectradar.application.scoring
 
 import org.springframework.ai.document.Document
 

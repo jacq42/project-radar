@@ -4,7 +4,7 @@ import com.microsoft.playwright.BrowserContext
 import com.microsoft.playwright.BrowserType
 import com.microsoft.playwright.ElementHandle
 import com.microsoft.playwright.Playwright
-import de.jkrech.projectradar.application.ProjectsImporter
+import de.jkrech.projectradar.application.scoring.ProjectsImporter
 import org.slf4j.Logger
 import org.springframework.ai.document.Document
 import kotlin.use

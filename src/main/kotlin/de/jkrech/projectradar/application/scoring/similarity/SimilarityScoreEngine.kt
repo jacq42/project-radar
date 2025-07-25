@@ -1,13 +1,13 @@
-package de.jkrech.projectradar.application
+package de.jkrech.projectradar.application.scoring.similarity
 
+import de.jkrech.projectradar.application.MatchingServiceException
+import de.jkrech.projectradar.application.scoring.ProjectsImporter
+import de.jkrech.projectradar.application.scoring.ScoreEngine
+import de.jkrech.projectradar.application.scoring.similarity.embedding.EmbeddingService
 import de.jkrech.projectradar.domain.ImportedProject
-import de.jkrech.projectradar.domain.ProfileResource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
+import org.springframework.ai.document.Document
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.minutes
@@ -16,18 +16,17 @@ import kotlin.time.Duration.Companion.minutes
 @ConditionalOnProperty(name = ["service.scoring.engine"], havingValue = "similarity", matchIfMissing = false)
 class SimilarityScoreEngine(
     private val embeddingService: EmbeddingService,
-    private val profileReadingService: ProfileReadingService,
     private val projectsImporters: List<ProjectsImporter>,
     private val similarityService: SimilarityService
 ): ScoreEngine {
 
     private val logger = LoggerFactory.getLogger(SimilarityScoreEngine::class.java)
 
-    override fun findScores(profileResource: ProfileResource): List<ImportedProject> {
+    override fun findScoresFor(profileData: List<Document>): List<ImportedProject> {
         if (projectsImporters.isEmpty()) {
             throw MatchingServiceException("No projects importers configured")
         }
-        val embeddingProfile = embeddingsForProfile(profileResource)
+        val embeddingProfile = embeddingService.embedDocuments(profileData)
 
         return runBlocking {
             try {
@@ -45,6 +44,10 @@ class SimilarityScoreEngine(
                         }
                         .awaitAll()
                         .flatten()
+                }
+
+                if (importedProjects.isEmpty()) {
+                    throw MatchingServiceException("No projects imported from any source")
                 }
 
                 val projectsWithSimilarity = withTimeout(1.minutes) {
@@ -77,12 +80,5 @@ class SimilarityScoreEngine(
                 emptyList()
             }
         }
-    }
-
-    private fun embeddingsForProfile(profileResource: ProfileResource): List<FloatArray> {
-        val profileData = profileReadingService.analyze(profileResource)
-        logger.info("Found ${profileData.size} documents in profile")
-        val embeddingProfile = embeddingService.embedDocuments(profileData)
-        return embeddingProfile
     }
 }

@@ -1,6 +1,9 @@
 package de.jkrech.projectradar.application
 
-import de.jkrech.projectradar.domain.ProfileResource
+import de.jkrech.projectradar.application.scoring.ProjectsImporter
+import de.jkrech.projectradar.application.scoring.similarity.embedding.EmbeddingService
+import de.jkrech.projectradar.application.scoring.similarity.SimilarityScoreEngine
+import de.jkrech.projectradar.application.scoring.similarity.SimilarityService
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -9,16 +12,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.ai.document.Document
-import org.springframework.core.io.ClassPathResource
 
 @ExtendWith(MockKExtension::class)
 class SimilarityScoreEngineTest {
 
     @MockK
     private lateinit var embeddingService: EmbeddingService
-
-    @MockK
-    private lateinit var profileReadingService: ProfileReadingService
 
     @MockK
     private lateinit var projectsImporter: ProjectsImporter
@@ -36,29 +35,24 @@ class SimilarityScoreEngineTest {
             floatArrayOf(1.0f, 2.0f, 3.0f),
             floatArrayOf(4.0f, 5.0f, 6.0f)
         )
-        every { profileReadingService.analyze(any()) } returns testDocuments
         every { projectsImporter.import() } returns testDocuments
         every { projectsImporter.source() } returns "importer"
         every { embeddingService.embedDocuments(any()) } returns embedding
         every { similarityService.cosineSimilarity(any(), any()) } returns 0.0
 
-        val profileResource = ProfileResource(ClassPathResource("profile/profile-de.md"))
-
         similarityScoreEngine = SimilarityScoreEngine(
             embeddingService = embeddingService,
-            profileReadingService = profileReadingService,
             projectsImporters = listOf(projectsImporter),
             similarityService = similarityService
         )
 
         // when
-        val result = similarityScoreEngine.findScores(profileResource)
+        val result = similarityScoreEngine.findScoresFor(testDocuments)
 
         // then
         assertThat(result).isNotEmpty()
 
         verifySequence {
-            profileReadingService.analyze(profileResource)
             embeddingService.embedDocuments(testDocuments)
             projectsImporter.import()
             embeddingService.embedDocuments(testDocuments)

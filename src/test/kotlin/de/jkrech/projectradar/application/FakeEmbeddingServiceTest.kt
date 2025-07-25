@@ -1,5 +1,6 @@
 package de.jkrech.projectradar.application
 
+import de.jkrech.projectradar.application.scoring.similarity.embedding.FakeEmbeddingService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.ai.document.Document

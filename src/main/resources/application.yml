@@ -14,24 +14,29 @@ spring:
   ai:
     chat:
       client:
-        enabled: false # disable auto configuration of chat client
+        enabled: true # disable auto configuration of chat client
 
     model:
+      chat: openai # openai
       embedding: openai # openai
 
+
     openai:
-#      base-url: https://api.openai.com
-      base-url: http://localhost:1234 # local llm
+      base-url: https://api.openai.com
+#      base-url: http://localhost:1234 # local llm
       api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o-mini
       embedding:
         model: text-embedding-3-small
       http-client:
-        connect-timeout: 60s
-        read-timeout: 2m
+        connect-timeout: 5m
+        read-timeout: 5m
 
 service:
   scoring:
-    engine: similarity # similarity, relevance
+    engine: relevance # similarity, relevance
   embedding:
     type: openai # openai, fake
 
@@ -48,16 +53,16 @@ projects:
       enabled: false
       file: classpath:projects/project-test.md
     pdf:
-      enabled: false
-      file: classpath:projects/project-dummy.pdf
+      enabled: true
+      file: classpath:projects/Test.pdf
     platform:
       freelancermap:
-        enabled: true
+        enabled: false
         keywords:
           - java
           - backend
       gulp:
-        enabled: true
+        enabled: false
         keywords:
           - java
           - backend

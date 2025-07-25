@@ -1,4 +1,4 @@
-package de.jkrech.projectradar.application
+package de.jkrech.projectradar.application.scoring.similarity.embedding
 
 import org.springframework.ai.document.Document
 import org.springframework.ai.embedding.EmbeddingModel

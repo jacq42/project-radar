@@ -1,4 +1,4 @@
-package de.jkrech.projectradar.application
+package de.jkrech.projectradar.application.scoring.similarity
 
 import org.springframework.stereotype.Component
 import kotlin.math.pow
